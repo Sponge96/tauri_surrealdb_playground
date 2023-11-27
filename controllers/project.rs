@@ -1,5 +1,5 @@
 use crate::errors::MyResult;
-use crate::models::project::{Project, ProjectCreate, ProjectResponse};
+use crate::models::project::{Project, ProjectCreate, ProjectResponse, ProjectUpdate};
 use crate::Store;
 use std::sync::Arc;
 
@@ -20,6 +20,24 @@ impl ProjectController {
         Ok(store
             .get()
             .execute_create(Self::RECORD, id, data)
+            .await?
+            .id
+            .get_id())
+    }
+
+    pub async fn update(store: Arc<Store>, id: &str, data: ProjectUpdate) -> MyResult<String> {
+        Ok(store
+            .get()
+            .execute_update(Self::RECORD, id, data)
+            .await?
+            .id
+            .get_id())
+    }
+
+    pub async fn delete(store: Arc<Store>, id: &str) -> MyResult<String> {
+        Ok(store
+            .get()
+            .execute_delete(Self::RECORD, id)
             .await?
             .id
             .get_id())

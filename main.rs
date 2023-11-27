@@ -19,8 +19,10 @@ async fn main() -> MyResult<()> {
     tauri::Builder::default()
         .manage(store)
         .invoke_handler(tauri::generate_handler![
-            handlers::greet,
-            handlers::list_projects
+            handlers::get_project,
+            handlers::list_projects,
+            handlers::delete_project,
+            handlers::update_project
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

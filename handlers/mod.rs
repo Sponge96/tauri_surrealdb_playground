@@ -1,23 +1,62 @@
 use crate::controllers::project::ProjectController;
 use crate::errors::MyResult;
-use crate::models::project::Project;
+use crate::models::project::{Project, ProjectCreate, ProjectUpdate};
 use crate::models::Store;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tauri::{AppHandle, Manager, Wry};
 
 #[derive(Deserialize)]
 pub struct GetParams {
-    pub record: String,
     pub id: String,
 }
 
-#[tauri::command]
-pub async fn greet(app: AppHandle<Wry>, args: GetParams) -> MyResult<Project> {
-    println!("test");
-    let store = (*app.state::<Arc<Store>>()).clone();
-    let result = ProjectController::get(store, &args.id).await;
-    result.into()
+#[derive(Serialize)]
+pub struct IpcResponse<D>
+where
+    D: Serialize,
+{
+    error: Option<IpcError>,
+    result: Option<IpcSimpleResult<D>>,
+}
+
+#[derive(Serialize)]
+struct IpcError {
+    message: String,
+}
+
+#[derive(Serialize)]
+pub struct IpcSimpleResult<D>
+where
+    D: Serialize,
+{
+    pub data: D,
+}
+
+impl<D> From<MyResult<D>> for IpcResponse<D>
+where
+    D: Serialize,
+{
+    fn from(res: MyResult<D>) -> Self {
+        match res {
+            Ok(data) => IpcResponse {
+                error: None,
+                result: Some(IpcSimpleResult { data }),
+            },
+            Err(err) => IpcResponse {
+                error: Some(IpcError {
+                    message: format!("{err}"),
+                }),
+                result: None,
+            },
+        }
+    }
+}
+
+#[derive(Deserialize)]
+pub struct UpdateParams<D> {
+    pub id: String,
+    pub data: D,
 }
 
 #[tauri::command]
@@ -25,5 +64,29 @@ pub async fn list_projects(app: AppHandle<Wry>) -> MyResult<Vec<Project>> {
     println!("listing projects");
     let store = (*app.state::<Arc<Store>>()).clone();
     let result = ProjectController::list(store).await;
-    result.into()
+    result
+}
+
+#[tauri::command]
+pub async fn get_project(app: AppHandle<Wry>, args: GetParams) -> IpcResponse<Project> {
+    println!("getting project");
+    let store = (*app.state::<Arc<Store>>()).clone();
+    ProjectController::get(store, &args.id).await.into()
+}
+
+#[tauri::command]
+pub async fn delete_project(app: AppHandle<Wry>, args: GetParams) -> IpcResponse<String> {
+    let store = (*app.state::<Arc<Store>>()).clone();
+    ProjectController::delete(store, &args.id).await.into()
+}
+
+#[tauri::command]
+pub async fn update_project(
+    app: AppHandle<Wry>,
+    args: UpdateParams<ProjectUpdate>,
+) -> IpcResponse<String> {
+    let store = (*app.state::<Arc<Store>>()).clone();
+    ProjectController::update(store, &args.id, args.data)
+        .await
+        .into()
 }

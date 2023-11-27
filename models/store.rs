@@ -23,12 +23,8 @@ impl SurrealDbStore {
 
     pub async fn execute_list<T: Castable>(&self, record: &str) -> MyResult<Vec<T>> {
         let result: Vec<T> = self.database.select(record).await?;
-        result
-            .into_iter()
-            .next()
-            .map_or(Err(MyError::StoreListFailed(format!("error here"))), |v| {
-                Ok(vec![v])
-            })
+        // TODO: can this propergate an error? I'm assuming only a SurrealDb one
+        Ok(result)
     }
 
     pub async fn execute_create<T: Creatable>(
@@ -52,9 +48,14 @@ impl SurrealDbStore {
         id: &str,
         data: T,
     ) -> MyResult<Record> {
-        let result: Option<Record> = self.database.update((record, id)).content(data).await?;
+        let result: Option<Record> = self.database.update((record, id)).merge(data).await?;
         result.ok_or(MyError::StoreUpdateFailed(format!(
             "execute_update {record}:{id} failed."
         )))
+    }
+
+    pub async fn execute_delete(&self, record: &str, id: &str) -> MyResult<Record> {
+        let result: Option<Record> = self.database.delete((record, id)).await?;
+        result.ok_or(MyError::StoreDeleteFailed(format!("del failed")))
     }
 }
