@@ -22,7 +22,8 @@ async fn main() -> MyResult<()> {
             handlers::get_project,
             handlers::list_projects,
             handlers::delete_project,
-            handlers::update_project
+            handlers::update_project,
+            handlers::create_project,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

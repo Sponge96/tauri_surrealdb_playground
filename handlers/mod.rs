@@ -6,11 +6,6 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tauri::{AppHandle, Manager, Wry};
 
-#[derive(Deserialize)]
-pub struct GetParams {
-    pub id: String,
-}
-
 #[derive(Serialize)]
 pub struct IpcResponse<D>
 where
@@ -54,11 +49,23 @@ where
 }
 
 #[derive(Deserialize)]
+pub struct GetParams {
+    pub id: String,
+}
+
+#[derive(Deserialize)]
 pub struct UpdateParams<D> {
     pub id: String,
     pub data: D,
 }
 
+#[derive(Deserialize)]
+pub struct CreateParams<D> {
+    pub id: String,
+    pub data: D,
+}
+
+/// TODO: implement this without MyResult
 #[tauri::command]
 pub async fn list_projects(app: AppHandle<Wry>) -> MyResult<Vec<Project>> {
     println!("listing projects");
@@ -87,6 +94,17 @@ pub async fn update_project(
 ) -> IpcResponse<String> {
     let store = (*app.state::<Arc<Store>>()).clone();
     ProjectController::update(store, &args.id, args.data)
+        .await
+        .into()
+}
+
+#[tauri::command]
+pub async fn create_project(
+    app: AppHandle<Wry>,
+    args: CreateParams<ProjectCreate>,
+) -> IpcResponse<String> {
+    let store = (*app.state::<Arc<Store>>()).clone();
+    ProjectController::create(store, &args.id, args.data)
         .await
         .into()
 }
