@@ -1,17 +1,18 @@
 pub mod project;
-mod store;
+pub mod project_handler;
+mod surreal_client;
 mod types;
-use crate::errors::MyResult;
-use store::SurrealDbStore;
+use crate::errors::StoreError;
+use surreal_client::SurrealDbClient;
 
-pub struct Store(SurrealDbStore);
+pub struct Client(SurrealDbClient);
 
-impl Store {
-    pub async fn new(address: String, ns: String, db: String) -> MyResult<Self> {
-        Ok(Store(SurrealDbStore::new(address, ns, db).await?))
+impl Client {
+    pub async fn new(address: String, ns: String, db: String) -> Result<Self, StoreError> {
+        Ok(Client(SurrealDbClient::new(address, ns, db).await?))
     }
 
-    pub fn get(&self) -> &SurrealDbStore {
+    pub fn get(&self) -> &SurrealDbClient {
         &self.0
     }
 }

@@ -1,36 +1,20 @@
 use serde::Serialize;
-pub type MyResult<T> = std::result::Result<T, MyError>;
+use thiserror::Error;
 
-#[derive(Debug, Serialize)]
-pub enum MyError {
-    SurrealError(surrealdb::Error),
+#[derive(Debug, Serialize, Error)]
+pub enum StoreError {
+    #[error("Database Error: {0}")]
+    SurrealError(#[from] surrealdb::Error),
+    #[error("Store Error: Failed to Create - '{0}'")]
     StoreCreateFailed(String),
-    StoreGetFailed(String),
-    StoreUpdateFailed(String),
+    #[error("Store Error: Failed to List - '{0}'")]
     StoreListFailed(String),
+    #[error("Store Error: Failed to Get - '{0}'")]
+    StoreGetFailed(String),
+    #[error("Store Error: Failed to Update - '{0}'")]
+    StoreUpdateFailed(String),
+    #[error("Store Error: Failed to Delete - '{0}'")]
     StoreDeleteFailed(String),
-    StoreFailToPatch {
-        method: String,
-        tb: String,
-        tid: String,
-    },
+    #[error("Convert Error: Failed to Delete - '{0}'")]
+    ConversionError(String),
 }
-
-impl From<surrealdb::Error> for MyError {
-    fn from(value: surrealdb::Error) -> Self {
-        MyError::SurrealError(value)
-    }
-}
-
-impl std::fmt::Display for MyError {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> core::result::Result<(), std::fmt::Error> {
-        match self {
-            MyError::StoreFailToPatch { method, tb, tid } => {
-                write!(fmt, "error in {method} for {tb}:{tid}")
-            }
-            _ => write!(fmt, "{self:?}"),
-        }
-    }
-}
-
-impl std::error::Error for MyError {}

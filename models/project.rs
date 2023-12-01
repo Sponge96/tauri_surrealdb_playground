@@ -1,55 +1,110 @@
-use super::types::{Castable, Creatable, Patchable, RecordId};
-use crate::errors::{MyError, MyResult};
+use super::types::{Castable, Creatable, Patchable};
+use crate::errors::StoreError;
 use serde::{Deserialize, Serialize};
-use serde_with_macros::skip_serializing_none;
+use surrealdb::sql::Thing;
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Project {
+pub struct ProjectGet {
     pub id: String,
     pub name: String,
-    pub programs: Option<Vec<String>>,
+    pub programs: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ProjectResponse {
-    pub id: RecordId,
+pub struct ProjectGetMapping {
+    pub id: Thing,
     pub name: String,
-    pub programs: Option<Vec<RecordId>>,
+    pub programs: Vec<Thing>,
 }
 
-impl Castable for ProjectResponse {}
+impl Castable for ProjectGetMapping {}
 
-impl TryFrom<ProjectResponse> for Project {
-    type Error = MyError;
+impl TryFrom<ProjectGetMapping> for ProjectGet {
+    type Error = StoreError;
 
-    fn try_from(value: ProjectResponse) -> MyResult<Project> {
-        let programs = value
+    fn try_from(response: ProjectGetMapping) -> Result<Self, Self::Error> {
+        let id = response.id.to_raw();
+
+        let programs = response
             .programs
-            .map(|ids| ids.into_iter().map(|id| id.get_id()).collect());
+            .into_iter()
+            .map(|program| program.to_raw())
+            .collect();
 
-        let task = Project {
-            id: value.id.get_id(),
-            name: value.name,
+        Ok(ProjectGet {
+            id,
+            name: response.name,
             programs,
-        };
-
-        Ok(task)
+        })
     }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ProjectCreate {
     pub name: String,
-    pub programs: Option<Vec<String>>,
+    pub programs: Vec<Thing>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ProjectCreateMapping {
+    pub name: String,
+    pub programs: Vec<String>,
+}
+
+impl Castable for ProjectCreateMapping {}
 impl Creatable for ProjectCreate {}
 
-#[skip_serializing_none]
+impl TryFrom<ProjectCreateMapping> for ProjectCreate {
+    type Error = StoreError;
+
+    fn try_from(response: ProjectCreateMapping) -> Result<Self, Self::Error> {
+        let programs = response
+            .programs
+            .into_iter()
+            .filter(|p| !p.is_empty())
+            .map(|p| Thing::try_from(p).expect("shit"))
+            .collect();
+
+        Ok(ProjectCreate {
+            name: response.name,
+            programs,
+        })
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ProjectUpdate {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub programs: Option<Vec<Thing>>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ProjectUpdateMapping {
     pub name: Option<String>,
     pub programs: Option<Vec<String>>,
 }
 
 impl Patchable for ProjectUpdate {}
+
+impl TryFrom<ProjectUpdateMapping> for ProjectUpdate {
+    type Error = StoreError;
+
+    fn try_from(response: ProjectUpdateMapping) -> Result<Self, Self::Error> {
+        let name = response.name;
+        let programs = match response.programs {
+            Some(programs) => {
+                let programs: Vec<Thing> = programs
+                    .into_iter()
+                    .filter(|p| !p.is_empty())
+                    .map(|p| Thing::try_from(p).expect("Failed to convert String to Thing"))
+                    .collect();
+                Some(programs)
+            }
+            None => None,
+        };
+
+        Ok(ProjectUpdate { name, programs })
+    }
+}
