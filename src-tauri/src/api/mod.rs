@@ -65,13 +65,11 @@ pub struct CreateParams<D> {
 }
 
 /// TODO: implement this without MyResult
-// #[tauri::command]
-// pub async fn list_projects(app: AppHandle<Wry>) -> IpcResponse<Vec<Project>> {
-//     let store = (*app.state::<Arc<Store>>()).clone();
-//     let result = ProjectController::list(store).await;
-
-//     IpcResponse::from(result.map(|projects| projects.into_iter().flatten().collect()))
-// }
+#[tauri::command]
+pub async fn list_projects(app: AppHandle<Wry>) -> Result<Vec<Project>, StoreError> {
+    let store = (*app.state::<Arc<Store>>()).clone();
+    ProjectController::list(store).await.into()
+}
 
 #[tauri::command]
 pub async fn get_project(app: AppHandle<Wry>, args: GetParams) -> IpcResponse<Project> {

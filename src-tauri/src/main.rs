@@ -22,6 +22,7 @@ async fn main() -> Result<(), StoreError> {
             api::delete_project,
             api::update_project,
             api::create_project,
+            api::list_projects,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

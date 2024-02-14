@@ -117,12 +117,7 @@ impl ProjectController {
         Ok(store.get().delete(Self::RECORD, id).await?.get_id())
     }
 
-    // pub async fn list(store: Arc<Store>) -> Result<Vec<Option<Project>>, StoreError> {
-    //     let project_responses = store.get().list::<ProjectResponse>(Self::RECORD).await?;
-
-    //     Ok(project_responses
-    //         .into_iter()
-    //         .map(|response| response.map(Project::try_from).transpose())
-    //         .collect::<Result<Vec<Option<Project>>, _>>()?)
-    // }
+    pub async fn list(store: Arc<Store>) -> Result<Vec<Project>, StoreError> {
+        Ok(store.get().list::<Project>(Self::RECORD).await?)
+    }
 }

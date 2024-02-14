@@ -32,8 +32,8 @@ impl SurrealDbStore {
     pub(in crate::models) async fn list<T: Castable>(
         &self,
         record: &str,
-    ) -> Result<Vec<Option<T>>, StoreError> {
-        let result: Vec<Option<T>> = self.database.select(record).await?;
+    ) -> Result<Vec<T>, StoreError> {
+        let result: Vec<T> = self.database.select(record).await?;
 
         if result.is_empty() {
             Err(StoreError::StoreListFailed(format!("record: {}", record)))
