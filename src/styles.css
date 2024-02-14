@@ -1,0 +1,6 @@
+#projectView {
+  background-color: #362046;
+  color: #c395e2;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}

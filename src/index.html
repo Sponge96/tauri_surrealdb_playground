@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Tauri App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Add buttons to switch between views -->
+    <button onclick="showView('projectView')">Projects</button>
+    <button onclick="showView('anotherView')">Another View</button>
+
+    <div id="projectView">
+        <header>Projects</header>
+        <div id="project-column">
+            <div id="project-list"></div>
+        </div>
+        <div id="task-column">
+            <div id="task-list"></div>
+        </div>
+    </div>
+
+    <div id="anotherView" style="display: none;">
+        <!-- Content for another view goes here -->
+        <h2>Another View</h2>
+        <p>This is another view content.</p>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

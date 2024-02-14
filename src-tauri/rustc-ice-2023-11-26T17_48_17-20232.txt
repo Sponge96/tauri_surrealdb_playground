@@ -1,0 +1,62 @@
+thread 'rustc' panicked at /rustc/2b603f95a48f10f931a61dd208fe3e5ffd64e491\compiler\rustc_errors\src\lib.rs:1000:33:
+Box<dyn Any>
+stack backtrace:
+   0:     0x7ff8b7fedc8f - std::backtrace::Backtrace::force_capture::h62024c2d517b74ac
+   1:     0x7ff8b7fedbf4 - std::backtrace::Backtrace::force_capture::h62024c2d517b74ac
+   2:     0x7ff87623a709 - <tracing_subscriber[2c2e0a162a23da32]::fmt::format::Writer>::write_fmt
+   3:     0x7ff8b8006793 - std::panicking::rust_panic_with_hook::h8ccfb57ec09cd095
+   4:     0x7ff876786b08 - rustc_mir_transform[e3b0cba2342a96eb]::dump_mir::emit_mir
+   5:     0x7ff876781509 - rustc_mir_transform[e3b0cba2342a96eb]::dump_mir::emit_mir
+   6:     0x7ff8767cbfa9 - <rustc_mir_transform[e3b0cba2342a96eb]::elaborate_drops::Elaborator as rustc_mir_dataflow[87716cd1bf6635fb]::elaborate_drops::DropElaborator>::array_subpath
+   7:     0x7ff8766f2f36 - rustc_mir_transform[e3b0cba2342a96eb]::coroutine::mir_coroutine_witnesses
+   8:     0x7ff8766f2ce8 - rustc_mir_transform[e3b0cba2342a96eb]::coroutine::mir_coroutine_witnesses
+   9:     0x7ff8767d84c7 - <rustc_mir_transform[e3b0cba2342a96eb]::elaborate_drops::Elaborator as rustc_mir_dataflow[87716cd1bf6635fb]::elaborate_drops::DropElaborator>::array_subpath
+  10:     0x7ff8767d84fd - <rustc_mir_transform[e3b0cba2342a96eb]::elaborate_drops::Elaborator as rustc_mir_dataflow[87716cd1bf6635fb]::elaborate_drops::DropElaborator>::array_subpath
+  11:     0x7ff8767d3f3f - <rustc_mir_transform[e3b0cba2342a96eb]::elaborate_drops::Elaborator as rustc_mir_dataflow[87716cd1bf6635fb]::elaborate_drops::DropElaborator>::array_subpath
+  12:     0x7ff8767cd066 - <rustc_mir_transform[e3b0cba2342a96eb]::elaborate_drops::Elaborator as rustc_mir_dataflow[87716cd1bf6635fb]::elaborate_drops::DropElaborator>::array_subpath
+  13:     0x7ff8766f0abb - rustc_mir_transform[e3b0cba2342a96eb]::coroutine::mir_coroutine_witnesses
+  14:     0x7ff876d5dab2 - <rustc_query_impl[e4dc983efa1e51be]::plumbing::QueryCtxt as rustc_query_system[309559b239c4cb29]::query::QueryContext>::depth_limit_error
+  15:     0x7ff876da99d3 - <rustc_query_impl[e4dc983efa1e51be]::plumbing::QueryCtxt as rustc_query_system[309559b239c4cb29]::query::QueryContext>::depth_limit_error
+  16:     0x7ff875b90aa7 - <rustc_query_impl[e4dc983efa1e51be]::plumbing::QueryCtxt as rustc_query_system[309559b239c4cb29]::query::QueryContext>::load_side_effects
+  17:     0x7ff876e0dde1 - <rustc_query_impl[e4dc983efa1e51be]::plumbing::QueryCtxt as rustc_query_system[309559b239c4cb29]::query::QueryContext>::depth_limit_error
+  18:     0x7ff876120f2f - <rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>::impl_method_has_trait_impl_trait_tys
+  19:     0x7ff8775dcc89 - <rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>::coroutine_hidden_types
+  20:     0x7ff876087a18 - <rustc_middle[8e7c40aa8d03313e]::ty::util::OpaqueTypeExpander as rustc_type_ir[201e414d9b2ef64a]::fold::TypeFolder<rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>>::fold_ty
+  21:     0x7ff875083d31 - <rustc_middle[8e7c40aa8d03313e]::traits::specialization_graph::OverlapMode>::get
+  22:     0x7ff87508b644 - <rustc_middle[8e7c40aa8d03313e]::ty::Ty as rustc_errors[ede30dab3ff0e63b]::diagnostic::IntoDiagnosticArg>::into_diagnostic_arg
+  23:     0x7ff8760878ac - <rustc_middle[8e7c40aa8d03313e]::ty::util::OpaqueTypeExpander as rustc_type_ir[201e414d9b2ef64a]::fold::TypeFolder<rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>>::fold_ty
+  24:     0x7ff875082ebc - <rustc_middle[8e7c40aa8d03313e]::traits::specialization_graph::OverlapMode>::get
+  25:     0x7ff8750b8497 - <rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>::try_expand_impl_trait_type
+  26:     0x7ff875411f58 - rustc_hir_analysis[64b222115f95db7f]::check::check::check_mod_item_types
+  27:     0x7ff874d230af - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  28:     0x7ff874d7f4df - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  29:     0x7ff874d6e841 - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  30:     0x7ff874db9f33 - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  31:     0x7ff874d71c0c - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  32:     0x7ff874ab1c49 - <rustc_hir_analysis[64b222115f95db7f]::constrained_generic_params::ParameterCollector as rustc_type_ir[201e414d9b2ef64a]::visit::TypeVisitor<rustc_middle[8e7c40aa8d03313e]::ty::context::TyCtxt>>::visit_const
+  33:     0x7ff8753d78be - rustc_hir_analysis[64b222115f95db7f]::check_crate
+  34:     0x7ff8751972dd - rustc_interface[9b45c5e05bc90792]::passes::analysis
+  35:     0x7ff874d24dad - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  36:     0x7ff874cef849 - rustc_traits[29c3b7b303939306]::type_op::type_op_normalize_fn_sig
+  37:     0x7ff874d6de2c - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  38:     0x7ff874d961e7 - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  39:     0x7ff874d4c867 - rustc_query_impl[e4dc983efa1e51be]::profiling_support::alloc_self_profile_query_strings
+  40:     0x7ff87223a576 - rustc_driver_impl[6796d1c2f4dc5447]::main
+  41:     0x7ff87224fe07 - rustc_driver_impl[6796d1c2f4dc5447]::args::arg_expand_all
+  42:     0x7ff872246234 - rustc_driver_impl[6796d1c2f4dc5447]::args::arg_expand_all
+  43:     0x7ff872247b7b - rustc_driver_impl[6796d1c2f4dc5447]::args::arg_expand_all
+  44:     0x7ff87223a9ff - rustc_driver_impl[6796d1c2f4dc5447]::main
+  45:     0x7ff87223ab18 - rustc_driver_impl[6796d1c2f4dc5447]::main
+  46:     0x7ff8b80189fc - std::sys::windows::thread::Thread::new::h9d47a43126527096
+  47:     0x7ff937a3257d - BaseThreadInitThunk
+  48:     0x7ff93880aa58 - RtlUserThreadStart
+
+
+rustc version: 1.76.0-nightly (2b603f95a 2023-11-12)
+platform: x86_64-pc-windows-msvc
+
+query stack during panic:
+#0 [mir_coroutine_witnesses] coroutine witness types for `models::store::<impl at src\models\store.rs:11:1: 11:20>::execute_live::{closure#0}`
+#1 [check_mod_item_types] checking item types in module `models::store`
+#2 [analysis] running analysis passes on this crate
+end of query stack
