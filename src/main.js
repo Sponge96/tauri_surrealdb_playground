@@ -25,18 +25,13 @@ function showView(viewName = 'projectView') {
 
 
 async function fetchProjects() {
-    try {
-        const response = await invoke("list_projects"); // Update the URL accordingly
-        if (response.error) {
-            console.error("Error fetching projects:", response.error.message);
-            return;
-        }
-
-        const projects = response.result.data;
+        const response = await invoke("list_projects");
+        console.log(response);
+    
+        const projects = response;
+        
         displayProjects(projects);
-    } catch (error) {
-        console.error("Error fetching projects:", error.message);
-    }
+
 }
 
 function displayProjects(projects) {
